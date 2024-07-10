@@ -36,7 +36,9 @@ class SyncDatabases:
                 return True
         
         return False
-    
+
+    # TODO: подумать как апдейтить в вторую базу данных. Можно сразу сохранять пары айдишек первая_бд - вторая_бд и по этим парам находить айдишку во второй бд
+    # но тогда что делать с удаленными страницами? 
     def check_updates(self, db, page):
         for item in db['results']:
               if item['id'] == page['id']:
@@ -62,13 +64,15 @@ class SyncDatabases:
         print(log_s)
         logging.info(log_s[:-1])
 
-        pages_with_changed_names = [x for x in updated_db['results'] if self.check_updates(curr_db, x)]
+        #TODO: подумать как нормально апдейдить названия задач
+
+        # pages_with_changed_names = [x for x in updated_db['results'] if self.check_updates(curr_db, x)]
         
-        log_s = ''
-        for x in pages_with_changed_names:
-            log_s += f'Name: {x["properties"]["Name"]["title"][0]["text"]["content"]}, id: {x["id"]}\n'
-        print(log_s)
-        logging.info(log_s[:-1])
+        # log_s = ''
+        # for x in pages_with_changed_names:
+        #     log_s += f'Name: {x["properties"]["Name"]["title"][0]["text"]["content"]}, id: {x["id"]}\n'
+        # print(log_s)
+        # logging.info(log_s[:-1])
 
         for page in new_pages:
             upload_json = {
@@ -86,6 +90,6 @@ desar_to_all_tasks = SyncDatabases(db_id_from=DESAR_TASKS_ID, db_id_to=ALL_TASKS
 while True:
     desar_to_all_tasks.pull_db()
     logging.info('updated from_db')
-    time.sleep(15)
+    time.sleep(60)
     desar_to_all_tasks.sync()
     logging.info('syncing with to_db is done.')
